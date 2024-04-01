@@ -102,13 +102,19 @@ body {
     color: #fff; 
 }
 
-#messages { 
+#rooms {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.messages { 
     list-style-type: none; 
     margin: 0; 
     padding: 0; 
 }
 
-#messages > li { 
+.messages > li { 
     padding: 0.5rem 1rem; 
 }
 
@@ -116,11 +122,11 @@ body {
     background: #efefef; 
 } */
 
-#messages > .ownMessage { 
+.messages > .ownMessage { 
     text-align: right;  
 }
 
-#messages > .notification {
+.messages > .notification {
     text-align: center;
 }
 

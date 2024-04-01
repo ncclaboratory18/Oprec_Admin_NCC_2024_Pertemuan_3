@@ -53,8 +53,8 @@ Sebelum masuk ke pembuatan aplikasi, kita akan mencoba mengintegrasikan websocke
     app.use(express.static(join(__dirname, "public")));
 
     io.on('connection', (socket) => {
-        let userAdded = false;
-        console.log("New client connect with socket id: " + socket.id);
+        let addedUser = false;
+        let rooms = [];
     })
 
     server.listen(3000, () => {
@@ -74,40 +74,41 @@ Sebelum masuk ke pembuatan aplikasi, kita akan mencoba mengintegrasikan websocke
 5. Pada terminal, akan terlihat klien yang terkoneksi beserta socket id-nya<br>![alt text](img/init-terminal.png)
 
 ### Menambah user
-Pada websocket, komunikasi antara klien dan server mengikuti konsep `event-driven`, di mana komunikasi terjadi berdasarkan kejadian atau peristiwa. Pada socket.io, kita dapat membuat event dengan fungsi `socket.emit()` dan membuat listenernya dengan fungsi `socket.on()`. Event ini dapat terjadi di klien maupun server. Jika event sebagai pemicu komunikasi berada di klien, maka kita perlu membuat listenernya di server, begitupun sebaliknya. Saat ini, kita akan membuat event pertama yaitu `create user` dan `new user`.
-1. Buat event `create user` pada sisi klien ketika terjadi submit pada form input nama dengan menambahkan kode berikut pada `public/client.js`:
+Pada websocket, komunikasi antara klien dan server mengikuti konsep `event-driven`, di mana komunikasi terjadi berdasarkan kejadian atau peristiwa. Pada socket.io, kita dapat membuat event dengan fungsi `socket.emit()` dan membuat listenernya dengan fungsi `socket.on()`. Event ini dapat terjadi di klien maupun server. Jika event sebagai pemicu komunikasi berada di klien, maka kita perlu membuat listenernya di server, begitupun sebaliknya. Saat ini, kita akan membuat event pertama yaitu `new user`.
+1. Buat event `new user` pada sisi klien ketika terjadi submit pada form input nama dengan menambahkan kode berikut pada `public/client.js`:
     ```R
     nameForm.addEventListener("submit", (e) => {
         e.preventDefault();
 
         if(nameInput.value) {
             username = nameInput.value;
-            socket.emit('create user', {"username": username});
-            addNotificationMessage("You are join");
+            socket.emit("new user", {"username": nameInput.value, "room": room});
+            addNotificationMessage("You are join to global room", room);
             nameInput.value = "";
             nameModal.style.display = "none";
         }
-    });
+    })
     ```
-2. Buat listener untuk menanggapi event `create user` pada server dengan menambahkan kode berikut pada `server.js`, letakkan kode ini di dalan `io.on('connection', (socket) => {})`:
+2. Buat listener untuk menanggapi event `new user` pada server dengan menambahkan kode berikut pada `server.js`, letakkan kode ini di dalan `io.on('connection', (socket) => {})`:
     ```R
     socket.on("new user", (data) => {
-        if (userAdded) return;
+        if (addedUser) return;
 
         // add username to socket session
         socket.username = data.username;
-        numUsers += 1;
-        userAdded = true;
+        numusers +=1;
+        addedUser = true;
 
-        // broadcast new user to other active user
-        socket.broadcast.emit("new user", data);
+        // add to user list
+        users.push({"username": data.username});
+        socket.broadcast.emit("new user", {"username": data.username, "room": data.room});
     });
     ```
     Pada kode tersebut, server juga melakukan broadcast event `new user` untuk mengirim data pengguna baru kepada pengguna aktif lainnya.
 3. Selanjutnya, kita perlu membuat event listener `new user` pada klien dengan menambahkan kode berikut pada `client.js`
     ```R
     socket.on("new user", (data) => {
-        addNotificationMessage(data.username + " joined");
+        addNotificationMessage(data.username + " joined", data.room);
     });
     ```
 4. Akses kembali `localhost:3000` pada dua browser, lalu isi username.<br>![alt text](img/new-user.png)
@@ -116,40 +117,41 @@ Pada websocket, komunikasi antara klien dan server mengikuti konsep `event-drive
 Selanjutnya, kita akan membuat event `chat message` untuk melakukan pengiriman pesan. Disini, klien dapat menentukan mau mengirim pesan ke mana. Hal ini dapat dilakukan dengan mengimplementasikan `room` pada socket.io. Pada implementasinya, room merupakan suatu struktur data map dengan key berupa nama room dan valuenya berupa kumpulan socket.id yang tergabung dalam room tersebut.
 1. Buat event `join room` dan `chat message` pada `public/client.js` dengan menambahkan kode berikut:
     ```R
-    roomForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-
-        room = roomInput.value;
-        if (room) {
-            addNotificationMessage("Join " + room + " room");
-            socket.emit("join room", {"user": username, "room": room});
-            roomInput.value = "";
-        }
-        else {
-            addNotificationMessage("Join global room");
-        }
-    });
-
+    // submit new message
     messageForm.addEventListener("submit", (e) => {
         e.preventDefault();
         
         if (messageInput.value) {
-            addOwnMessage(messageInput.value);
-            socket.emit("chat message", {"message": messageInput.value, "room": room});
+            addOwnMessage(messageInput.value, room);
+            socket.emit("chat message", {"sender": username, "message": messageInput.value, "room": room});
             messageInput.value = '';
+        }
+    });
+
+    // enter a room
+    roomForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        if (roomInput.value) {
+            socket.emit("join room", {"user": username, "room": roomInput.value});
+            createRoomMessages(roomInput.value);
+            changeRoomMessage(room, roomInput.value);
+            room = roomInput.value;
+            roomInput.value = "";
+        }
+        else {
+            changeRoomMessage(room, roomInput.value);
+            room = roomInput.value;
         }
     });
     ```
 2. Pada server, tambahkan listener untuk event `join room` dan `chat message` seperti berikut:
     ```R
-    socket.on("join room", (data) => {
-        socket.join(data.room);
-    });
-
     socket.on('chat message', (data) => {
         chatData = {
-            "sender": socket.username,
+            "sender": data.sender,
             "message": data.message,
+            "room": data.room
         }
         if (data.room === "") {
             socket.broadcast.emit('new message', chatData);
@@ -158,17 +160,51 @@ Selanjutnya, kita akan membuat event `chat message` untuk melakukan pengiriman p
             socket.to(data.room).emit("new message", chatData);
         }
     });
+
+    socket.on("join room", (data) => {
+        socket.join(data.room);
+        rooms.push(data.room);
+    })
     ```
     - Untuk bergabung ke dalam room, dapat digunakan `socket.join()`, socket.io akan otomatis membuat room baru jika belum ada
     - Server melakukan pengiriman pesan ke klien lain yang dituju dengan dengna melakukan emit event `new message`
-    - Pada baris ke-15, kita tidak menggunakan `broadcast`, melainkan `to(data.room)` untuk mengirim pesan ke klien tertentu saja.
+    - Pada baris ke-11, kita tidak menggunakan `broadcast`, melainkan `to(data.room)` untuk mengirim pesan ke klien tertentu saja.
 3. Selanjutnya, tambahkan listener `new message` pada `public/client.js`:
     ```R
     socket.on('new message', (data) => {
-        addOtherMessage(data.message, data.sender);
+        addOtherMessage(data.message, data.sender, data.room);
     });
     ```
 4. Sekarang, kita telah dapat berbagung ke suatu `room` dan melakukan pengiriman pesan sesuai `room` yang dituju<br>![alt text](img/chat.png)
+
+### disconnect event
+Selanjutnya, kita akan memberikan notifikasi untuk tiap klien yang terputus dari koneksi. Ketika suatu klien terputus dari koneksi, akan ada event `disconnect` yang dapat ditangkap oleh server. Selanjutnya, server dapat melakukan broadcast ke seluruh klien lain terkait untuk memberikan notifikasi tersebut.
+1. Buat listener `disconnect` pada `server.js` sebagai berikut:
+    ```R
+    socket.on("disconnect", () => {
+        if(addedUser) {
+        numusers -= 1;
+
+        rooms.forEach((room) => {
+            socket.broadcast.emit("user leave", {
+                "username": socket.username,
+                "room": room 
+            });
+        });
+        socket.broadcast.emit("user leave", {
+            "username": socket.username,
+            "room": "" 
+        });
+        }
+    });
+    ```
+2. Lalu, buat listener untuk event `user leave` sebagai berikut:
+    ```R
+    socket.on("user leave", (data) => {
+        addNotificationMessage(data.username + " leave", data.room);
+    });
+    ```
+3. Maka ketika ada klien yang meninggalkan obrolan, terdapat notifikasi seperti berikut<br>![alt text](img/leave-user.png)
 
 ## Penugasan
 Soon

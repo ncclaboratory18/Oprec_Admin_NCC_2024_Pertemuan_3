@@ -1,10 +1,17 @@
 const colors = {
+    "blue": "#7AA2E3",
+    "beige": "#F8F6E3",
+    "tosca": "#6AD4DD",
+    "red": "#FF204E",
     "mint": "#CDFADB",
+    "navy": "#496989",
     "grey": "#DDDDDD",
+    "black": "#222831",
+    "white": "#F6F5F5",
     "skyblue": "#DFD5FF"
 };
 
-const messages = document.querySelector('#messages');
+const roomList = document.querySelector('#rooms');
 
 function setAuthCookie(cvalue) {
     document.cookie = `auth_token=${cvalue}`
@@ -27,7 +34,10 @@ function getAuthCookie() {
 }
 
 // add own message to messages list
-function addOwnMessage(msg) {
+function addOwnMessage(msg, room) {
+    // get the messages container based on room
+    const messages = document.querySelector(`#${room}-messages`);
+
     // create list element
     let newMessage = document.createElement('li');
     newMessage.className = "ownMessage";
@@ -50,7 +60,10 @@ function addOwnMessage(msg) {
 }
 
 // add message from another user to messages list
-function addOtherMessage(msg, sender) {
+function addOtherMessage(msg, sender, room) {
+    // get the messages container based on room
+    const messages = document.querySelector(`#${room}-messages`);
+
     // create list element
     let newMessage = document.createElement('li');
 
@@ -72,7 +85,10 @@ function addOtherMessage(msg, sender) {
 }
 
 // add connection error message
-function addNotificationMessage(msg) {
+function addNotificationMessage(msg, room) {
+    // get the messages container based on room
+    const messages = document.querySelector(`#${room}-messages`);
+
     // create list message element
     let newMessage = document.createElement('li');
     newMessage.className = "notification";
@@ -86,4 +102,35 @@ function addNotificationMessage(msg) {
 
     messages.appendChild(newMessage);
     window.scrollTo(0,document.body.scrollHeight);
+}
+
+// function to create messages container for a new room
+function createRoomMessages(room){
+    // check if the room is exist
+    if (document.querySelector(`#${room}-room`) != null) {
+        return;
+    }
+
+    // create the messages container based on room
+    const newRoom = document.createElement('li');
+    newRoom.id = `${room}-room`;
+    newRoom.style.display = 'none';
+    const messages = document.createElement(`ul`);
+    messages.className = 'messages';
+    messages.id = `${room}-messages`;
+
+    newRoom.appendChild(messages);
+    roomList.appendChild(newRoom);
+
+    addNotificationMessage("Join " + room + " room", room);
+}
+
+// function to swap room
+function changeRoomMessage(prevRoom, currRoom) {
+    // get prev and curr room
+    const prevRoomElement = document.querySelector(`#${prevRoom}-room`);
+    const currRoomElement = document.querySelector(`#${currRoom}-room`);
+
+    prevRoomElement.style.display = 'none';
+    currRoomElement.style.display = 'block';
 }
