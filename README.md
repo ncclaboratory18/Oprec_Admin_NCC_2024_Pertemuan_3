@@ -2,14 +2,24 @@
 
 ## Daftar Isi
 - [Websocket](#websocket)
-    - [Perbandingan dengan REST API](#perbandingan-dengan-rest-api)
     - [Pengertian websocket?](#pengertian-websocket)
+    - [Perbandingan dengan REST API](#perbandingan-dengan-rest-api)
     - [Bagaimana koneksi websocket terbentuk?](#bagaimana-koneksi-websocket-terbentuk)
 - [Membangun aplikasi chat realtime dengan socket.io](#membangun-aplikasi-chat-realtime-dengan-socket-io)
-    - []
+    - [Integrasi websocket](#integrasi-websocket)
+    - [Menambah user](#menambah-user)
+    - [Bergabung ke room dan mengirim pesan](#bergabung-ke-room-dan-mengirim-pesan)
 - [Penugasan](#penugasan)
 
 ## Websocket
+### Pengertian websocket
+Websocket merupakan protokol komunikasi yang menyediakan saluran komunikasi 2 arah, full-duplex, melalui suatu koneksi TCP. Hal ini memungkinkan klien dan server untuk berkomunikasi secara real-time. Selain itu, komunikasi pada websocket bersifat event-driven sehingga memungkinkan interaksi yang fleksibel dan responsif. Protokol ini telah distandarisasi oleh IETF dan didefinisikan pada <a href="https://datatracker.ietf.org/doc/html/rfc6455">RFC 6455</a>.
+Websocket biasa digunakan untuk fitur aplikasi yang memerlukan update data dari server secara real-time. Hal ini karena websocket memungkinkan klien dan server untuk melakukan komunikasi dua arah sehingga dapat berpengaruh pada kecepatan dan performa aplikasi. Berikut beberapa contoh aplikasi atau fitur yang dapat memanfaatkan websocket untuk mendukung komunikasi real-time:
+1. Multiplayer game<br><img src="img/multiplayer-game.png" height="200">
+2. Aplikasi berkirim pesan<br><img src="img/chat-app.png" height="200">
+3. Collaborative editing tools (figma, canva, miro)<br><img src="img/collaborative-editing-tools.jpg" height="200">
+4. Platform voting real-time<br><img src="img/live-poll1.png" height="200"> <img src="img/live-poll2.png" height="200">
+
 ### Perbandingan dengan REST API
 Pada pertemuan 2, kita telah mempelajari terkait apa itu REST API. Metode ini sangat sering digunakan ketika klien membutuhkan data atau resource yang ada pada server. Meski begitu, penggunaan REST API dapat tidak efektif pada beberapa kasus tertentu, terutama jika aplikasi membutuhkan pembaruan data secara real-time. Pada kasus tersebut, klien harus secara aktif melakukan request pada server untuk mendapatkan pembaruan data. Sedangkan dengan websocket, server dapat menginisiasi pengiriman data baru karena bentuk komunikasi websocket yang dua arah. Berikut contoh perbedaan websocket dan REST API dalam mengimplementasikan realtime chat application.<br>
 <center><img src="img/rest_chat.jpg" height="300"></center><br>
@@ -18,14 +28,6 @@ Pada REST API, ketika client1 mengirimkan chat baru, client akan dengan melakuka
 Sedangkan pada websocket, client1 dan client2 akan terlebih dahulu membuat koneksi dengan server. Koneksi ini akan tetap terjaga hingga salah satu pihak memutus koneksi. Jadi ketika client1 mengirim chat baru ke server, server dapat langsung mengirim chat tersebut ke client2 melalui koneksi yang telah dibangun. Dengan begitu, client2 tidak perlu meminta data baru secara terus menerus.
 Secara lebih detail, perbedaan websocket dan REST API dapat dilihat pada tabel berikut:<br>
 <img src="img/rest_vs_websocket.jpg" height="300"><br>
-
-### Pengertian websocket
-Websocket merupakan protokol komunikasi yang menyediakan saluran komunikasi 2 arah, full-duplex, melalui suatu koneksi TCP. Hal ini memungkinkan klien dan server untuk berkomunikasi secara real-time. Selain itu, komunikasi pada websocket bersifat event-driven sehingga memungkinkan interaksi yang fleksibel dan responsif. Protokol ini telah distandarisasi oleh IETF dan didefinisikan pada <a href="https://datatracker.ietf.org/doc/html/rfc6455">RFC 6455</a>.
-Websocket biasa digunakan untuk fitur aplikasi yang memerlukan update data dari server secara real-time. Hal ini karena websocket memungkinkan klien dan server untuk melakukan komunikasi dua arah sehingga dapat berpengaruh pada kecepatan dan performa aplikasi. Berikut beberapa contoh aplikasi atau fitur yang dapat memanfaatkan websocket untuk mendukung komunikasi real-time:
-1. Multiplayer game<br><img src="img/multiplayer-game.png" height="200">
-2. Aplikasi berkirim pesan<br><img src="img/chat-app.png" height="200">
-3. Collaborative editing tools (figma, canva, miro)<br><img src="img/collaborative-editing-tools.jpg" height="200">
-4. Platform voting real-time<br><img src="img/live-poll1.png" height="200"> <img src="img/live-poll2.png" height="200">
 
 ### Bagaimana koneksi websocket terbentuk
 Untuk membuat koneksi websocket, klien dan server perlu melakukan handshake sebagai setup awal. Pada proses ini, klien akan mengirimkan HTTP request untuk meminta koneksi websocket. Response HTTP 101 switching protocol akan diberikan server kepada klien jika koneksi berhasil dibuat. Selanjutnya komunikasi antara klien dan server dapat dilakukan melalui saluran full-duplex websocket. Proses pembentukan koneksi dapat terlihat pada ilustrasi berikut:<br>
