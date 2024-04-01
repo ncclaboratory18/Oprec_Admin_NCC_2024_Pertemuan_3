@@ -9,6 +9,7 @@
     - [Integrasi websocket](#integrasi-websocket)
     - [Menambah user](#menambah-user)
     - [Bergabung ke room dan mengirim pesan](#bergabung-ke-room-dan-mengirim-pesan)
+    - [Disconnect event](#disconnect-event)
 - [Penugasan](#penugasan)
 
 ## Websocket
