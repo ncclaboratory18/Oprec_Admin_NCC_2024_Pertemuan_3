@@ -99,7 +99,7 @@ Pada websocket, komunikasi antara klien dan server mengikuti konsep `event-drive
 
         // add username to socket session
         socket.username = data.username;
-        numusers +=1;
+        numUsers +=1;
         addedUser = true;
 
         // add to user list
@@ -186,7 +186,7 @@ Selanjutnya, kita akan memberikan notifikasi untuk tiap klien yang terputus dari
     ```R
     socket.on("disconnect", () => {
         if(addedUser) {
-        numusers -= 1;
+        numUsers -= 1;
 
         rooms.forEach((room) => {
             socket.broadcast.emit("user leave", {
