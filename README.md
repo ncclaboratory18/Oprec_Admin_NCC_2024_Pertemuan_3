@@ -14,7 +14,7 @@
 
 ## Websocket
 ### Pengertian websocket
-Websocket merupakan protokol komunikasi yang menyediakan saluran komunikasi 2 arah, full-duplex, melalui suatu koneksi TCP. Hal ini memungkinkan klien dan server untuk berkomunikasi secara real-time. Selain itu, komunikasi pada websocket bersifat event-driven sehingga memungkinkan interaksi yang fleksibel dan responsif. Protokol ini telah distandarisasi oleh IETF dan didefinisikan pada <a href="https://datatracker.ietf.org/doc/html/rfc6455">RFC 6455</a>.
+Websocket merupakan protokol komunikasi yang menyediakan saluran komunikasi 2 arah, full-duplex, melalui suatu koneksi TCP. Hal ini memungkinkan klien dan server untuk berkomunikasi secara real-time. Selain itu, komunikasi pada websocket bersifat event-driven sehingga memungkinkan interaksi yang fleksibel dan responsif. Protokol ini telah distandarisasi oleh IETF dan didefinisikan pada <a href="https://datatracker.ietf.org/doc/html/rfc6455">RFC 6455</a>.<br>
 Websocket biasa digunakan untuk fitur aplikasi yang memerlukan update data dari server secara real-time. Hal ini karena websocket memungkinkan klien dan server untuk melakukan komunikasi dua arah sehingga dapat berpengaruh pada kecepatan dan performa aplikasi. Berikut beberapa contoh aplikasi atau fitur yang dapat memanfaatkan websocket untuk mendukung komunikasi real-time:
 1. Multiplayer game<br><img src="img/multiplayer-game.png" height="200">
 2. Aplikasi berkirim pesan<br><img src="img/chat-app.png" height="200">
@@ -71,7 +71,7 @@ Sebelum masuk ke pembuatan aplikasi, kita akan mencoba mengintegrasikan websocke
     ```R
     const socket = io()
     ```
-    - fungsi io() sudah tersedia karena kita telah menambahkan `<script src="/socket.io/socket.io.js"></script>` pada file `public/index.html`
+    - Class io() sudah tersedia karena kita telah menambahkan `<script src="/socket.io/socket.io.js"></script>` pada file `public/index.html`
 4. Jalankan server dengan command `npm run start` lalu akses `localhost:3000` pada web browser<br>
 ![alt text](img/init-apps.png)
 5. Pada terminal, akan terlihat klien yang terkoneksi beserta socket id-nya<br>![alt text](img/init-terminal.png)
