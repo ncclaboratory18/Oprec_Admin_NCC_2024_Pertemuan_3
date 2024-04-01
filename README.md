@@ -6,9 +6,9 @@
     - [Pengertian websocket?](#pengertian-websocket)
     - [Bagaimana koneksi websocket terbentuk?](#bagaimana-koneksi-websocket-terbentuk)
 - [Membangun aplikasi chat realtime dengan socket.io](#membangun-aplikasi-chat-realtime-dengan-socket-io)
-    - [Integrasi websocket](integrasi-websocket)
-    - [Menambah user](menambah-user)
-    - [Bergabung ke room dan mengirim pesan](bergabung-ke-room-dan-mengirim-pesan)
+    - [Integrasi websocket](#integrasi-websocket)
+    - [Menambah user](#menambah-user)
+    - [Bergabung ke room dan mengirim pesan](#bergabung-ke-room-dan-mengirim-pesan)
 - [Penugasan](#penugasan)
 
 ## Websocket
