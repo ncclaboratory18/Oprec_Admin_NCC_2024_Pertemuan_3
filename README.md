@@ -210,7 +210,6 @@ Selanjutnya, kita akan memberikan notifikasi untuk tiap klien yang terputus dari
 3. Maka ketika ada klien yang meninggalkan obrolan, terdapat notifikasi seperti berikut<br>![alt text](img/leave-user.png)
 
 ## Penugasan
-Membuat aplikasi chat realtime
 ### Fitur utama:
 - Public room tempat semua user dapat mengirim pesan
 - Private room tempat user yang terdaftar dapat mengirim pesan
