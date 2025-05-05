@@ -21,6 +21,15 @@ Websocket biasa digunakan untuk fitur aplikasi yang memerlukan update data dari 
 3. Collaborative editing tools (figma, canva, miro)<br><img src="img/collaborative-editing-tools.jpg" height="200">
 4. Platform voting real-time<br><img src="img/live-poll1.png" height="200"> <img src="img/live-poll2.png" height="200">
 
+### Perbandingan dengan REST API
+ Pada pertemuan 2, kita telah mempelajari terkait apa itu REST API. Metode ini sangat sering digunakan ketika klien membutuhkan data atau resource yang ada pada server. Meski begitu, penggunaan REST API dapat tidak efektif pada beberapa kasus tertentu, terutama jika aplikasi membutuhkan pembaruan data secara real-time. Pada kasus tersebut, klien harus secara aktif melakukan request pada server untuk mendapatkan pembaruan data. Sedangkan dengan websocket, server dapat menginisiasi pengiriman data baru karena bentuk komunikasi websocket yang dua arah. Berikut contoh perbedaan websocket dan REST API dalam mengimplementasikan realtime chat application.<br>
+ <center><img src="img/rest_chat.jpg" height="300"></center><br>
+ Pada REST API, ketika client1 mengirimkan chat baru, client akan dengan melakukan POST REQUEST untuk mengirimkan data chat ke server. Selanjutnya, server akan menyimpan data tersebut di database. Agar client2 bisa mendapat data baru tersebut, ia harus secara berulang melakukan GET Request secara berulang dengan interval tertentu. Hal ini tentu saja kurang efektif karena akan ada banyak GET request yang tidak memberikan data baru pada client2.<br>
+ <center><img src="img/websocket_chat.jpg" height="300"></center><br>
+ Sedangkan pada websocket, client1 dan client2 akan terlebih dahulu membuat koneksi dengan server. Koneksi ini akan tetap terjaga hingga salah satu pihak memutus koneksi. Jadi ketika client1 mengirim chat baru ke server, server dapat langsung mengirim chat tersebut ke client2 melalui koneksi yang telah dibangun. Dengan begitu, client2 tidak perlu meminta data baru secara terus menerus.
+ Secara lebih detail, perbedaan websocket dan REST API dapat dilihat pada tabel berikut:<br>
+ <img src="img/rest_vs_websocket.jpg" height="300"><br>
+
 
 ### Bagaimana koneksi websocket terbentuk
 Untuk membuat koneksi websocket, klien dan server perlu melakukan handshake sebagai setup awal. Pada proses ini, klien akan mengirimkan HTTP request untuk meminta koneksi websocket. Response HTTP 101 switching protocol akan diberikan server kepada klien jika koneksi berhasil dibuat. Selanjutnya komunikasi antara klien dan server dapat dilakukan melalui saluran full-duplex websocket. Proses pembentukan koneksi dapat terlihat pada ilustrasi berikut:<br>
